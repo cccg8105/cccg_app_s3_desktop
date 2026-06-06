@@ -1,0 +1,49 @@
+---
+description: Usar y mantener actualizada la documentación en docs/ como referencia del proyecto
+alwaysApply: true
+---
+
+# Documentación del proyecto (docs/)
+
+Antes de implementar cambios relevantes, **lee la documentación en `docs/`** para entender el contexto, la arquitectura y los lineamientos existentes.
+
+## Referencia inicial obligatoria
+
+| Documento | Cuándo consultarlo |
+|-----------|-------------------|
+| `docs/informacion-tecnica.md` | Arquitectura, capas, módulos, stack, persistencia, seguridad, concurrencia |
+| `docs/funcionalidades.md` | Comportamiento visible para el usuario y flujos funcionales |
+
+Si la tarea toca una funcionalidad nueva o cambia comportamiento de usuario, cruza ambos documentos antes de codificar.
+
+## Lineamientos de desarrollo (seguir y preservar)
+
+- **Capas**: `domain` → `application` → `infrastructure` → `ui`. No mezclar responsabilidades entre capas.
+- **Domain**: modelos Pydantic y excepciones; sin PySide6 ni boto3.
+- **Application**: casos de uso y servicios; orquestación sin widgets Qt.
+- **Infrastructure**: AWS (boto3), filesystem, cifrado, sync engine.
+- **UI**: PySide6, workers (`QRunnable`/`QThreadPool`), modelos Qt; operaciones largas fuera del hilo principal.
+- **Persistencia**: rutas en `config/paths.py`; JSON con Pydantic; credenciales cifradas en `CredentialStore`.
+- **Python**: PEP 8, tipado explícito, `ruff` según `pyproject.toml`.
+- **Alcance**: cambios mínimos y focalizados; reutilizar convenciones del módulo vecino.
+
+## Actualizar documentación
+
+Cuando el cambio afecte lo descrito en `docs/`, **actualiza los documentos en la misma entrega** (no dejes la docs desactualizada):
+
+| Cambio en código | Actualizar |
+|------------------|------------|
+| Nueva funcionalidad o flujo de usuario | `docs/funcionalidades.md` |
+| Nuevo módulo, servicio, dependencia o patrón técnico | `docs/informacion-tecnica.md` |
+| Cambio de arquitectura, persistencia o seguridad | `docs/informacion-tecnica.md` |
+| Comandos de build, tests o empaquetado | `README.md` y, si aplica, `docs/informacion-tecnica.md` |
+
+Si añades un documento nuevo en `docs/`, inclúyelo en la tabla de referencias de `docs/informacion-tecnica.md` (sección *Referencias cruzadas*).
+
+## Criterio de completitud
+
+Al cerrar una tarea con impacto funcional o técnico, verifica:
+
+1. El código respeta las capas y convenciones de `docs/informacion-tecnica.md`.
+2. La documentación refleja el estado actual del proyecto.
+3. No se introducen dependencias o patrones no alineados con el stack documentado sin actualizar la docs.
